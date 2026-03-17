@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Product — VOLTEX</title>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+.product-layout{display:grid;grid-template-columns:1fr 1fr;gap:4rem;padding:2rem 3rem 5rem;max-width:1200px;margin:0 auto}
+/* GALLERY */
+.product-gallery{}
+.main-img-wrap{background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;padding:3rem;margin-bottom:1rem;position:relative;overflow:hidden}
+.main-img-wrap img{max-width:100%;max-height:380px;object-fit:contain;transition:transform .4s}
+.main-img-wrap:hover img{transform:scale(1.05)}
+.thumb-row{display:flex;gap:.7rem}
+.thumb{width:74px;height:74px;background:var(--surface2);border:1px solid var(--border);padding:.5rem;cursor:pointer;transition:border-color .2s;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.thumb img{width:100%;height:100%;object-fit:contain}
+.thumb.active,.thumb:hover{border-color:var(--cyan)}
+.img-badge{position:absolute;top:1rem;left:1rem;font-family:'Barlow Condensed',sans-serif;font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:.22rem .55rem;clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%)}
+/* INFO */
+.product-info{}
+.p-cat{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:.5rem}
+.p-name{font-family:'Barlow Condensed',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;text-transform:uppercase;color:var(--white);line-height:1.05;margin-bottom:.8rem}
+.p-rating-row{display:flex;align-items:center;gap.8rem;gap:.8rem;margin-bottom:1.2rem;flex-wrap:wrap}
+.p-rating-count{font-size:.78rem;color:var(--muted)}
+.p-brand{font-size:.75rem;letter-spacing:.1em;color:var(--muted);padding:.2rem .5rem;border:1px solid var(--border);background:var(--surface2)}
+.p-price-row{display:flex;align-items:baseline;gap:1rem;margin-bottom.8rem;margin-bottom:.8rem}
+.p-price{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:800;color:var(--cyan)}
+.p-old{font-size:1rem;color:var(--muted);text-decoration:line-through}
+.p-save{font-size:.78rem;font-weight:600;color:var(--green);background:rgba(0,200,83,.1);padding:.2rem .5rem;border:1px solid rgba(0,200,83,.3)}
+.p-desc{font-size:.9rem;line-height:1.8;color:var(--muted);margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border)}
+.p-section-label{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--white);margin-bottom:.7rem}
+.qty-control{display:flex;align-items:center;gap:0;margin-bottom:1.5rem}
+.qty-dec,.qty-inc{width:42px;height:42px;border:1px solid var(--border);background:none;color:var(--text);font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.qty-dec:hover,.qty-inc:hover{background:var(--cyan);color:#000;border-color:var(--cyan)}
+.qty-num{width:52px;height:42px;border:1px solid var(--border);border-left:none;border-right:none;background:var(--surface);color:var(--white);text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700}
+.p-cta-row{display:flex;gap:.8rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.p-cta-row .btn-primary,.p-cta-row .btn-secondary{flex:1;justify-content:center;min-width:140px}
+.p-stock{font-size:.78rem;color:var(--green);margin-bottom:1.5rem;display:flex;align-items:center;gap:.4rem}
+.p-stock::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--green)}
+.specs-box{background:var(--surface2);border:1px solid var(--border);padding:1.4rem;margin-bottom:1.5rem}
+.spec-row{display:flex;gap:1rem;padding:.55rem 0;border-bottom:1px solid var(--border);font-size:.84rem}
+.spec-row:last-child{border-bottom:none}
+.spec-row dt{color:var(--muted);min-width:120px;flex-shrink:0}
+.spec-row dd{color:var(--white);font-weight:500}
+.trust-row{display:flex;gap:1rem;flex-wrap:wrap}
+.trust-chip{display:flex;align-items:center;gap:.4rem;font-size:.73rem;color:var(--muted);background:var(--surface2);border:1px solid var(--border);padding:.4rem .7rem}
+.trust-chip span{font-size:.9rem}
+/* RELATED */
+#related{padding:5rem 3rem;border-top:1px solid var(--border)}
+.related-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;margin-top:2rem}
+.tab-row{display:flex;border-bottom:1px solid var(--border);margin-bottom:2rem}
+.tab-item{padding:.8rem 1.5rem;font-family:'Barlow Condensed',sans-serif;font-size:.82rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .25s}
+.tab-item.active,.tab-item:hover{color:var(--cyan);border-bottom-color:var(--cyan)}
+.tab-content{display:none;font-size:.88rem;color:var(--muted);line-height:1.8}
+.tab-content.active{display:block}
+.reviews-list{display:flex;flex-direction:column;gap:1rem}
+.review-card{background:var(--surface2);border:1px solid var(--border);padding:1.2rem}
+.review-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem;flex-wrap:wrap;gap:.5rem}
+.review-author{font-size:.82rem;font-weight:500;color:var(--white)}
+.review-date{font-size:.72rem;color:var(--muted)}
+.review-text{font-size:.84rem;color:var(--muted);line-height:1.7}
+
+@media(max-width:900px){
+  .product-layout{grid-template-columns:1fr;gap:2rem;padding:1.5rem}
+  .related-grid{grid-template-columns:repeat(2,1fr)}
+  #related{padding:3rem 1.5rem}
+}
+</style>
+</head>
+<body>
+<div id="toast" class="toast"></div>
+<div class="cart-overlay" id="cartOverlay"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-drawer-header"><h2>Cart <span id="cartCount"></span></h2><button class="cart-drawer-close" id="cartDrawerClose">✕</button></div>
+  <div class="cart-drawer-items" id="cartDrawerItems"><div class="cart-drawer-empty"><span>🛒</span>Cart is empty</div></div>
+  <div class="cart-drawer-footer"><div class="cart-drawer-total"><span>Total</span><strong id="cartDrawerTotal">₹0</strong></div><a href="cart.html" class="btn-view-cart">View Full Cart</a><a href="checkout.html" class="btn-checkout">Checkout →</a></div>
+</div>
+
+<nav class="site-nav" id="siteNav">
+  <a href="index.html" class="nav-logo">VOLT<span>EX</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="cart.html">Cart</a></li>
+    <li><a href="account.html">Account</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="account.html" class="nav-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
+    <button class="nav-btn" id="cartNavBtn" style="position:relative"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span class="cart-badge" id="cartBadge">0</span></button>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu"><a href="index.html">Home</a><a href="shop.html">Shop</a><a href="cart.html">Cart</a><a href="account.html">Account</a></div>
+
+<div class="page-header" style="padding-bottom:1.5rem">
+  <div class="page-header-inner">
+    <div class="page-header-breadcrumb" id="breadcrumb"><a href="index.html">Home</a><span>/</span><a href="shop.html">Shop</a><span>/</span><span id="bcProduct">Product</span></div>
+  </div>
+</div>
+
+<div class="product-layout" id="productLayout"></div>
+
+<div id="tabSection" style="max-width:1200px;margin:0 auto;padding:0 3rem 3rem">
+  <div class="tab-row">
+    <div class="tab-item active" data-tab="desc">Description</div>
+    <div class="tab-item" data-tab="specs">Specifications</div>
+    <div class="tab-item" data-tab="reviews">Reviews</div>
+    <div class="tab-item" data-tab="shipping">Shipping & Returns</div>
+  </div>
+  <div class="tab-content active" id="tabDesc"></div>
+  <div class="tab-content" id="tabSpecs"></div>
+  <div class="tab-content" id="tabReviews"></div>
+  <div class="tab-content" id="tabShipping">
+    <p><strong style="color:var(--white)">Shipping:</strong> Free delivery on orders over ₹1,999. Same-day dispatch for orders placed before 3PM. Express delivery (1-2 business days) available for ₹199.</p>
+    <br/><p><strong style="color:var(--white)">Returns:</strong> 30-day hassle-free return policy. Products must be in original condition and packaging. Initiate a return from your account page or contact support.</p>
+    <br/><p><strong style="color:var(--white)">Warranty:</strong> All electronics include 1-year manufacturer warranty. Extended warranty available at checkout.</p>
+  </div>
+</div>
+
+<section id="related" style="max-width:1400px;margin:0 auto">
+  <p class="sec-label">You May Also Like</p>
+  <h2 class="sec-title">Related Products</h2>
+  <div class="related-grid" id="relatedGrid"></div>
+</section>
+
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-brand"><span class="footer-logo">VOLT<span>EX</span></span><p>Your premium store for tech, sports, audio, gaming and fitness gear.</p></div>
+    <div class="footer-col"><h4>Shop</h4><ul><li><a href="shop.html">All Products</a></li><li><a href="shop.html?cat=tech">Tech</a></li><li><a href="shop.html?cat=audio">Audio</a></li></ul></div>
+    <div class="footer-col"><h4>Help</h4><ul><li><a href="#">Returns</a></li><li><a href="#">Warranty</a></li><li><a href="#">Contact</a></li></ul></div>
+    <div class="footer-col"><h4>Pages</h4><ul><li><a href="index.html">Home</a></li><li><a href="cart.html">Cart</a></li><li><a href="account.html">Account</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 VOLTEX Technologies Pvt. Ltd.</p><div class="footer-pay"><span class="pay-chip">UPI</span><span class="pay-chip">Visa</span><span class="pay-chip">EMI</span></div></div>
+</footer>
+
+<script src="shared.js"></script>
+<script>
+window.addEventListener('scroll',()=>document.getElementById('siteNav').classList.toggle('scrolled',scrollY>60));
+document.getElementById('hamburger').addEventListener('click',function(){this.classList.toggle('open');document.getElementById('mobileMenu').classList.toggle('open');});
+
+function openCartDrawer(){document.getElementById('cartDrawer').classList.add('open');document.getElementById('cartOverlay').classList.add('open');document.body.style.overflow='hidden';}
+function closeCartDrawer(){document.getElementById('cartDrawer').classList.remove('open');document.getElementById('cartOverlay').classList.remove('open');document.body.style.overflow='';}
+document.getElementById('cartNavBtn').addEventListener('click',()=>{renderCartDrawer();openCartDrawer();});
+document.getElementById('cartDrawerClose').addEventListener('click',closeCartDrawer);
+document.getElementById('cartOverlay').addEventListener('click',closeCartDrawer);
+
+function renderCartDrawer(){
+  const cart=Cart.get();
+  document.getElementById('cartCount').textContent=`(${Cart.count()})`;
+  document.getElementById('cartDrawerTotal').textContent=fmt(Cart.total());
+  const el=document.getElementById('cartDrawerItems');
+  if(!cart.length){el.innerHTML='<div class="cart-drawer-empty"><span>🛒</span>Cart is empty</div>';return;}
+  el.innerHTML=cart.map(item=>{const p=PRODUCTS.find(x=>x.id===item.id);if(!p)return'';return`<div class="cart-drawer-item"><img src="${p.img}" alt="${p.name}"/><div class="cdi-info"><span class="cdi-name">${p.name}</span><span class="cdi-price">${fmt(p.price)}</span><div class="cdi-row"><button class="cdi-qty-btn" onclick="Cart.changeQty(${p.id},-1);renderCartDrawer()">−</button><span class="cdi-qty-val">${item.qty}</span><button class="cdi-qty-btn" onclick="Cart.changeQty(${p.id},1);renderCartDrawer()">+</button><button class="cdi-remove" onclick="Cart.remove(${p.id});renderCartDrawer()">Remove</button></div></div></div>`;}).join('');
+}
+
+// PRODUCT RENDER
+const pid=parseInt(new URLSearchParams(location.search).get('id'))||1;
+let qty=1;
+
+function renderProduct(){
+  const p=PRODUCTS.find(x=>x.id===pid)||PRODUCTS[0];
+  document.title=p.name+' — VOLTEX';
+  document.getElementById('bcProduct').textContent=p.name;
+  const save=p.oldPrice?Math.round((1-p.price/p.oldPrice)*100):0;
+
+  document.getElementById('productLayout').innerHTML=`
+    <div class="product-gallery">
+      <div class="main-img-wrap">
+        <img src="${p.img}" alt="${p.name}" id="mainImg"/>
+        ${p.badge?`<span class="img-badge badge-${p.badge}">${p.badge==='new'?'NEW':p.badge==='hot'?'🔥 HOT':'SALE'}</span>`:''}
+      </div>
+      <div class="thumb-row">
+        ${[p.img,
+          'https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=300&q=80',
+          'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=300&q=80'
+        ].map((src,i)=>`<div class="thumb ${i===0?'active':''}" onclick="switchImg(this,'${src}')"><img src="${src}" alt="view"/></div>`).join('')}
+      </div>
+    </div>
+    <div class="product-info">
+      <p class="p-cat">${p.cat.toUpperCase()}</p>
+      <h1 class="p-name">${p.name}</h1>
+      <div class="p-rating-row">
+        <div class="stars-row">${starsHTML(p.stars)}</div>
+        <span class="p-rating-count">${p.rating} reviews</span>
+        <span class="p-brand">${p.brand}</span>
+      </div>
+      <div class="p-price-row">
+        <span class="p-price">${fmt(p.price)}</span>
+        ${p.oldPrice?`<span class="p-old">${fmt(p.oldPrice)}</span><span class="p-save">Save ${save}%</span>`:''}
+      </div>
+      <p class="p-desc">${p.desc}</p>
+      <p class="p-stock">In Stock — Ships within 24 hours</p>
+      <p class="p-section-label">Quantity</p>
+      <div class="qty-control">
+        <button class="qty-dec" onclick="if(qty>1){qty--;document.getElementById('qtyNum').value=qty}">−</button>
+        <input class="qty-num" id="qtyNum" type="number" value="1" min="1" onchange="qty=Math.max(1,parseInt(this.value)||1);this.value=qty"/>
+        <button class="qty-inc" onclick="qty++;document.getElementById('qtyNum').value=qty">+</button>
+      </div>
+      <div class="p-cta-row">
+        <button class="btn-primary" onclick="Cart.add(${p.id},qty);renderCartDrawer();openCartDrawer();showToast('Added to cart!')">Add to Cart →</button>
+        <button class="btn-secondary" onclick="location.href='checkout.html'">Buy Now</button>
+      </div>
+      <div class="trust-row">
+        <div class="trust-chip"><span>🚚</span> Free Delivery</div>
+        <div class="trust-chip"><span>🛡️</span> 1-Year Warranty</div>
+        <div class="trust-chip"><span>🔄</span> 30-Day Return</div>
+        <div class="trust-chip"><span>💳</span> 0% EMI</div>
+      </div>
+    </div>`;
+
+  // TABS
+  document.getElementById('tabDesc').innerHTML=`<p>${p.desc}</p><br/><ul style="list-style:none;display:flex;flex-direction:column;gap:.5rem">${p.specs.map(s=>`<li style="display:flex;gap:.6rem;align-items:flex-start"><span style="color:var(--cyan)">▸</span>${s}</li>`).join('')}</ul>`;
+  document.getElementById('tabSpecs').innerHTML=`<dl>${p.specs.map(s=>{const[k,...v]=s.split(' ');return`<div class="spec-row"><dt>${k}</dt><dd>${v.join(' ')}</dd></div>`;}).join('')}</dl>`;
+  document.getElementById('tabReviews').innerHTML=`<div class="reviews-list">
+    <div class="review-card"><div class="review-top"><div><div class="stars-row">${starsHTML(5)}</div><span class="review-author">Verified Buyer</span></div><span class="review-date">Jan 2026</span></div><p class="review-text">Absolutely love this product. Quality is top-notch and it arrived well before the expected date. Would buy again.</p></div>
+    <div class="review-card"><div class="review-top"><div><div class="stars-row">${starsHTML(4)}</div><span class="review-author">Verified Buyer</span></div><span class="review-date">Feb 2026</span></div><p class="review-text">Great value for money. Exactly as described. The packaging was very secure and the product works perfectly out of the box.</p></div>
+  </div>`;
+
+  // RELATED
+  const related=PRODUCTS.filter(x=>x.id!==p.id&&x.cat===p.cat).slice(0,4);
+  document.getElementById('relatedGrid').innerHTML=related.map(r=>`
+    <div class="product-card" onclick="location.href='product.html?id=${r.id}'" style="cursor:pointer">
+      <div class="product-card-img-wrap"><img class="product-card-img" src="${r.img}" alt="${r.name}" loading="lazy"/>${r.badge?`<span class="product-badge badge-${r.badge}">${r.badge==='new'?'NEW':'SALE'}</span>`:''}</div>
+      <div class="product-card-body"><p class="pc-cat">${r.cat}</p><p class="pc-name">${r.name}</p><div class="pc-prices"><span class="pc-price">${fmt(r.price)}</span></div><div class="stars-row">${starsHTML(r.stars)}</div></div>
+    </div>`).join('');
+}
+
+function switchImg(el,src){
+  document.getElementById('mainImg').src=src;
+  document.querySelectorAll('.thumb').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// TABS
+document.querySelectorAll('.tab-item').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-item').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('tab'+t.dataset.tab.charAt(0).toUpperCase()+t.dataset.tab.slice(1)).classList.add('active');
+  });
+});
+
+Cart.updateBadge();
+renderProduct();
+</script>
+</body>
+</html>
