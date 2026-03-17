@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Cart — VOLTEX</title>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+.cart-layout{display:grid;grid-template-columns:1fr 360px;gap:2rem;padding:2rem 3rem 6rem;max-width:1200px;margin:0 auto}
+/* ITEMS */
+.cart-table{}
+.cart-table-head{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 40px;gap:1rem;padding:.8rem 1rem;background:var(--surface);border:1px solid var(--border);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:1px}
+.cart-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 40px;gap:1rem;align-items:center;padding:1.2rem 1rem;background:var(--card);border:1px solid var(--border);margin-bottom:1px;transition:background .2s}
+.cart-row:hover{background:var(--surface)}
+.cart-prod{display:flex;align-items:center;gap:1rem}
+.cart-prod-img{width:72px;height:72px;object-fit:contain;background:var(--surface2);padding:.4rem;flex-shrink:0}
+.cart-prod-name{font-size:.88rem;font-weight:500;color:var(--white);margin-bottom:.2rem;cursor:pointer;transition:color .2s}
+.cart-prod-name:hover{color:var(--cyan)}
+.cart-prod-cat{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.cart-price{font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;color:var(--cyan)}
+.cart-qty-ctrl{display:flex;align-items:center;gap:0}
+.cart-qty-btn{width:30px;height:30px;border:1px solid var(--border);background:none;color:var(--text);font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.cart-qty-btn:hover{background:var(--cyan);color:#000;border-color:var(--cyan)}
+.cart-qty-num{width:36px;height:30px;border:1px solid var(--border);border-left:none;border-right:none;background:var(--surface);color:var(--white);text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:.95rem}
+.cart-subtotal{font-family:'Barlow Condensed',sans-serif;font-size:1.05rem;font-weight:700;color:var(--white)}
+.cart-remove-btn{width:32px;height:32px;background:none;border:1px solid transparent;color:var(--muted);font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.cart-remove-btn:hover{border-color:var(--red);color:var(--red);background:rgba(255,23,68,.08)}
+.cart-empty-state{text-align:center;padding:5rem 2rem;background:var(--card);border:1px solid var(--border)}
+.cart-empty-state span{display:block;font-size:4rem;margin-bottom:1rem}
+.cart-empty-state h2{font-family:'Barlow Condensed',sans-serif;font-size:1.5rem;font-weight:700;color:var(--white);margin-bottom:.6rem;text-transform:uppercase}
+.cart-empty-state p{color:var(--muted);margin-bottom:2rem;font-size:.9rem}
+.cart-actions{display:flex;justify-content:space-between;align-items:center;padding:1rem 0;flex-wrap:wrap;gap:1rem}
+/* COUPON */
+.coupon-row{display:flex;gap:0;margin-top:1.5rem}
+.coupon-row input{flex:1;padding:.75rem 1rem;background:var(--surface);border:1px solid var(--border);border-right:none;color:var(--text);font-family:'Barlow',sans-serif;font-size:.85rem;outline:none;transition:border-color .2s}
+.coupon-row input:focus{border-color:var(--cyan)}
+.coupon-row input::placeholder{color:var(--muted)}
+.coupon-row button{padding:.75rem 1.2rem;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:.78rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;transition:all .2s}
+.coupon-row button:hover{background:var(--cyan);color:#000;border-color:var(--cyan)}
+.coupon-success{font-size:.78rem;color:var(--green);margin-top:.5rem;display:none}
+/* SUMMARY */
+.cart-summary{background:var(--card);border:1px solid var(--border);padding:1.8rem;position:sticky;top:calc(var(--nav-h)+1rem);height:fit-content}
+.cart-summary h2{font-family:'Barlow Condensed',sans-serif;font-size:1.2rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--white);margin-bottom:1.5rem;padding-bottom:1rem;border-bottom:1px solid var(--border)}
+.summary-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem;font-size:.88rem}
+.summary-row span:first-child{color:var(--muted)}
+.summary-row span:last-child{color:var(--white);font-weight:500}
+.summary-row.savings span:last-child{color:var(--green)}
+.summary-row.total{border-top:1px solid var(--border);padding-top:1rem;margin-top:.5rem}
+.summary-row.total span:first-child{font-weight:600;color:var(--white);font-size:.95rem}
+.summary-row.total span:last-child{font-family:'Barlow Condensed',sans-serif;font-size:1.5rem;font-weight:800;color:var(--cyan)}
+.summary-checkout{display:block;text-align:center;width:100%;padding:1rem;background:var(--cyan);color:#000;border:none;font-family:'Barlow Condensed',sans-serif;font-size:.88rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;margin-top:1.5rem;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);transition:background .25s;text-decoration:none;display:flex;justify-content:center}
+.summary-checkout:hover{background:var(--orange);color:#fff}
+.trust-list{margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:.5rem}
+.trust-item{display:flex;align-items:center;gap:.5rem;font-size:.75rem;color:var(--muted)}
+.trust-item span:first-child{font-size:1rem}
+/* RECO */
+#reco{padding:5rem 3rem;border-top:1px solid var(--border)}
+.reco-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;margin-top:2rem}
+@media(max-width:1024px){.cart-layout{grid-template-columns:1fr}.cart-summary{position:static}.cart-table-head{display:none}.cart-row{grid-template-columns:1fr 1fr;grid-template-rows:auto auto}.cart-row .cart-prod{grid-column:1/-1}.reco-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.cart-layout,.#reco{padding-left:1.5rem;padding-right:1.5rem}#reco{padding-left:1.5rem;padding-right:1.5rem}}
+</style>
+</head>
+<body>
+<div id="toast" class="toast"></div>
+
+<nav class="site-nav" id="siteNav">
+  <a href="index.html" class="nav-logo">VOLT<span>EX</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="cart.html" class="active">Cart</a></li>
+    <li><a href="account.html">Account</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="account.html" class="nav-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
+    <a href="cart.html" class="nav-btn" style="position:relative"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span class="cart-badge" id="cartBadge">0</span></a>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu"><a href="index.html">Home</a><a href="shop.html">Shop</a><a href="cart.html">Cart</a><a href="account.html">Account</a></div>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="page-header-breadcrumb"><a href="index.html">Home</a><span>/</span><span>Shopping Cart</span></div>
+    <h1>Shopping Cart</h1>
+  </div>
+</div>
+
+<div class="cart-layout">
+  <div>
+    <div id="cartTableHead" class="cart-table-head" style="display:none">
+      <span>Product</span><span>Price</span><span>Quantity</span><span>Subtotal</span><span></span>
+    </div>
+    <div id="cartTableBody"></div>
+    <div class="cart-actions">
+      <a href="shop.html" class="btn-secondary">← Continue Shopping</a>
+      <button class="btn-secondary" onclick="Cart.clear();renderCart();showToast('Cart cleared','info')">Clear Cart</button>
+    </div>
+    <div class="coupon-row">
+      <input type="text" id="couponInput" placeholder="Coupon code (try: VOLTEX500)"/>
+      <button onclick="applyCoupon()">Apply</button>
+    </div>
+    <p class="coupon-success" id="couponMsg"></p>
+  </div>
+
+  <div class="cart-summary">
+    <h2>Order Summary</h2>
+    <div class="summary-row"><span>Subtotal</span><span id="summSubtotal">₹0</span></div>
+    <div class="summary-row savings" id="summSavingsRow" style="display:none"><span>Savings</span><span id="summSavings">-₹0</span></div>
+    <div class="summary-row" id="couponRow" style="display:none"><span>Coupon Discount</span><span id="summCoupon" style="color:var(--green)">-₹0</span></div>
+    <div class="summary-row"><span>Delivery</span><span id="summDelivery">₹0</span></div>
+    <div class="summary-row total"><span>Total</span><span id="summTotal">₹0</span></div>
+    <a href="checkout.html" class="summary-checkout">Proceed to Checkout →</a>
+    <div class="trust-list">
+      <div class="trust-item"><span>🔒</span> Secure 256-bit SSL payment</div>
+      <div class="trust-item"><span>🚚</span> Free delivery over ₹1,999</div>
+      <div class="trust-item"><span>🔄</span> 30-day easy returns</div>
+      <div class="trust-item"><span>💳</span> EMI available at checkout</div>
+    </div>
+  </div>
+</div>
+
+<section id="reco" style="max-width:1400px;margin:0 auto">
+  <p class="sec-label">Don't Miss Out</p>
+  <h2 class="sec-title" style="margin-bottom:0">You Might Like</h2>
+  <div class="reco-grid" id="recoGrid"></div>
+</section>
+
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-brand"><span class="footer-logo">VOLT<span>EX</span></span><p>Your premium store for tech, sports, audio, gaming and fitness gear.</p></div>
+    <div class="footer-col"><h4>Shop</h4><ul><li><a href="shop.html">All Products</a></li><li><a href="shop.html?cat=tech">Tech</a></li></ul></div>
+    <div class="footer-col"><h4>Help</h4><ul><li><a href="#">Returns</a></li><li><a href="#">Contact</a></li></ul></div>
+    <div class="footer-col"><h4>Pages</h4><ul><li><a href="index.html">Home</a></li><li><a href="checkout.html">Checkout</a></li><li><a href="account.html">Account</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 VOLTEX Technologies Pvt. Ltd.</p><div class="footer-pay"><span class="pay-chip">UPI</span><span class="pay-chip">Visa</span><span class="pay-chip">EMI</span></div></div>
+</footer>
+
+<script src="shared.js"></script>
+<script>
+window.addEventListener('scroll',()=>document.getElementById('siteNav').classList.toggle('scrolled',scrollY>60));
+document.getElementById('hamburger').addEventListener('click',function(){this.classList.toggle('open');document.getElementById('mobileMenu').classList.toggle('open');});
+
+let couponDiscount=0;
+
+function renderCart(){
+  const cart=Cart.get();
+  Cart.updateBadge();
+  const body=document.getElementById('cartTableBody');
+  const head=document.getElementById('cartTableHead');
+
+  if(!cart.length){
+    head.style.display='none';
+    body.innerHTML=`<div class="cart-empty-state"><span>🛒</span><h2>Your Cart is Empty</h2><p>Looks like you haven't added anything yet.</p><a href="shop.html" class="btn-primary">Start Shopping →</a></div>`;
+    updateSummary(0,0);
+    return;
+  }
+  head.style.display='grid';
+
+  let subtotal=0,savings=0;
+  body.innerHTML=cart.map(item=>{
+    const p=PRODUCTS.find(x=>x.id===item.id);if(!p)return'';
+    const lineTotal=p.price*item.qty;
+    subtotal+=lineTotal;
+    if(p.oldPrice)savings+=(p.oldPrice-p.price)*item.qty;
+    return`<div class="cart-row">
+      <div class="cart-prod">
+        <img class="cart-prod-img" src="${p.img}" alt="${p.name}"/>
+        <div>
+          <p class="cart-prod-name" onclick="location.href='product.html?id=${p.id}'">${p.name}</p>
+          <p class="cart-prod-cat">${p.cat}</p>
+        </div>
+      </div>
+      <div class="cart-price">${fmt(p.price)}</div>
+      <div class="cart-qty-ctrl">
+        <button class="cart-qty-btn" onclick="Cart.changeQty(${p.id},-1);renderCart()">−</button>
+        <input class="cart-qty-num" value="${item.qty}" readonly/>
+        <button class="cart-qty-btn" onclick="Cart.changeQty(${p.id},1);renderCart()">+</button>
+      </div>
+      <div class="cart-subtotal">${fmt(lineTotal)}</div>
+      <button class="cart-remove-btn" onclick="Cart.remove(${p.id});renderCart();showToast('Item removed')" title="Remove">×</button>
+    </div>`;
+  }).join('');
+  updateSummary(subtotal,savings);
+}
+
+function updateSummary(subtotal,savings){
+  const delivery=subtotal>1999||subtotal===0?0:99;
+  const total=subtotal-couponDiscount+delivery;
+  document.getElementById('summSubtotal').textContent=fmt(subtotal);
+  document.getElementById('summDelivery').textContent=delivery===0&&subtotal>0?'FREE':fmt(delivery);
+  document.getElementById('summTotal').textContent=fmt(Math.max(0,total));
+  const savRow=document.getElementById('summSavingsRow');
+  if(savings>0){savRow.style.display='flex';document.getElementById('summSavings').textContent='-'+fmt(savings);}else savRow.style.display='none';
+}
+
+function applyCoupon(){
+  const code=document.getElementById('couponInput').value.trim().toUpperCase();
+  const msg=document.getElementById('couponMsg');
+  const row=document.getElementById('couponRow');
+  if(code==='VOLTEX500'){
+    couponDiscount=500;
+    msg.textContent='✔ Coupon applied — ₹500 discount!';
+    msg.style.display='block';
+    row.style.display='flex';
+    document.getElementById('summCoupon').textContent='-₹500';
+    renderCart();
+    showToast('Coupon applied! ₹500 off');
+  }else{
+    msg.textContent='✗ Invalid coupon code';
+    msg.style.color='var(--red)';
+    msg.style.display='block';
+    showToast('Invalid coupon','error');
+  }
+}
+
+// RECOMMENDATIONS
+const recoProducts=PRODUCTS.slice(0,4);
+document.getElementById('recoGrid').innerHTML=recoProducts.map(p=>`
+  <div class="product-card" onclick="location.href='product.html?id=${p.id}'" style="cursor:pointer">
+    <div class="product-card-img-wrap"><img class="product-card-img" src="${p.img}" alt="${p.name}" loading="lazy"/>${p.badge?`<span class="product-badge badge-${p.badge}">${p.badge==='new'?'NEW':'SALE'}</span>`:''}</div>
+    <div class="product-card-body"><p class="pc-cat">${p.cat}</p><p class="pc-name">${p.name}</p><div class="pc-prices"><span class="pc-price">${fmt(p.price)}</span>${p.oldPrice?`<span class="pc-old">${fmt(p.oldPrice)}</span>`:''}</div></div>
+  </div>`).join('');
+
+Cart.updateBadge();
+renderCart();
+</script>
+</body>
+</html>
