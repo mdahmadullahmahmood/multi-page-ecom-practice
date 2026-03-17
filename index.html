@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>VOLTEX — Tech & Sports Gear</title>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+/* ─── HERO ─── */
+#hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;position:relative;overflow:hidden}
+.hero-grid-bg{position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:.18}
+.hero-glow{position:absolute;top:-20%;left:-10%;width:700px;height:700px;background:radial-gradient(circle,rgba(0,229,255,.08) 0%,transparent 70%);pointer-events:none}
+.hero-glow2{position:absolute;bottom:-10%;right:-5%;width:500px;height:500px;background:radial-gradient(circle,rgba(255,107,43,.06) 0%,transparent 70%);pointer-events:none}
+.hero-left{display:flex;flex-direction:column;justify-content:center;padding:calc(var(--nav-h) + 4rem) 3rem 5rem;position:relative;z-index:1}
+.hero-eyebrow{font-size:.7rem;letter-spacing:.42em;text-transform:uppercase;color:var(--cyan);margin-bottom:1.5rem;display:flex;align-items:center;gap:.8rem}
+.hero-eyebrow::before{content:'';width:28px;height:1px;background:var(--cyan)}
+.hero-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(3.5rem,6vw,7rem);font-weight:800;line-height:.93;letter-spacing:.02em;text-transform:uppercase;margin-bottom:1.5rem}
+.ht2{color:var(--cyan)}
+.ht3{color:transparent;-webkit-text-stroke:1px rgba(221,221,232,.22)}
+.hero-sub{font-size:.95rem;font-weight:300;line-height:1.8;color:var(--muted);max-width:420px;margin-bottom:3rem}
+.hero-ctas{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:3rem}
+.hero-stats{display:flex;gap:2.5rem;padding-top:2rem;border-top:1px solid var(--border)}
+.hs-item{display:flex;flex-direction:column;gap:.2rem}
+.hs-item strong{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:800;color:var(--white)}
+.hs-item span{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.hero-right{position:relative;overflow:hidden}
+.hero-right img{width:100%;height:100%;object-fit:cover;opacity:.65;animation:heroZoom 18s ease-in-out infinite alternate}
+@keyframes heroZoom{from{transform:scale(1)}to{transform:scale(1.05)}}
+.hero-pill{position:absolute;top:3rem;right:2rem;background:var(--orange);color:#fff;padding:.55rem 1rem;font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;clip-path:polygon(6px 0%,100% 0%,calc(100% - 6px) 100%,0% 100%)}
+
+/* ─── CATEGORIES ─── */
+#categories{padding:6rem 3rem}
+.cat-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;margin-top:2.5rem}
+.cat-card{background:var(--card);border:1px solid var(--border);padding:2rem 1.2rem;display:flex;flex-direction:column;align-items:center;gap:.8rem;text-align:center;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;text-decoration:none}
+.cat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--cyan);transform:scaleX(0);transition:transform .3s}
+.cat-card:hover{border-color:rgba(0,229,255,.4);transform:translateY(-4px);box-shadow:0 8px 30px rgba(0,229,255,.07)}
+.cat-card:hover::before{transform:scaleX(1)}
+.cat-icon{font-size:2.2rem;transition:transform .3s}
+.cat-card:hover .cat-icon{transform:scale(1.12)}
+.cat-name{font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--white)}
+.cat-count{font-size:.7rem;color:var(--muted)}
+
+/* ─── FEATURED PRODUCTS ─── */
+#featured{padding:2rem 3rem 6rem}
+.products-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2.5rem;flex-wrap:wrap;gap:1rem}
+.filter-tabs{display:flex;gap:.4rem;flex-wrap:wrap}
+.filter-btn{font-family:'Barlow Condensed',sans-serif;font-size:.75rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;padding:.38rem 1rem;border:1px solid var(--border);background:none;color:var(--muted);transition:all .2s}
+.filter-btn.active,.filter-btn:hover{background:var(--cyan);color:#000;border-color:var(--cyan)}
+.product-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem}
+.view-all-wrap{text-align:center;margin-top:2.5rem}
+
+/* ─── DEAL BANNER ─── */
+#deal-banner{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:5rem 3rem;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.deal-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(2.5rem,5vw,4.5rem);font-weight:800;text-transform:uppercase;line-height:.95;color:var(--white);margin-bottom:1.5rem}
+.deal-title span{color:var(--orange)}
+.deal-desc{font-size:.9rem;color:var(--muted);line-height:1.75;margin-bottom:2rem;max-width:400px}
+.countdown{display:flex;gap:1rem;margin-bottom:2rem;flex-wrap:wrap}
+.cdb{background:var(--surface2);border:1px solid var(--border);padding:.7rem 1.1rem;text-align:center;min-width:62px}
+.cdb .num{font-family:'Barlow Condensed',sans-serif;font-size:1.9rem;font-weight:800;color:var(--cyan);display:block;line-height:1}
+.cdb .lbl{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);display:block;margin-top:.2rem}
+.deal-img-wrap{position:relative;display:flex;align-items:center;justify-content:center}
+.deal-img-wrap img{max-width:100%;max-height:360px;object-fit:contain;filter:drop-shadow(0 20px 60px rgba(0,229,255,.12))}
+.deal-badge{position:absolute;top:1rem;right:1rem;width:76px;height:76px;background:var(--orange);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;line-height:1}
+.deal-badge .pct{font-size:1.5rem;color:#fff}
+.deal-badge .off{font-size:.6rem;color:rgba(255,255,255,.8);letter-spacing:.1em}
+
+/* ─── FEATURES ─── */
+#features{padding:4rem 3rem}
+.features-grid{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--border)}
+.feat-item{padding:1.8rem;display:flex;align-items:flex-start;gap:.9rem;border-right:1px solid var(--border);transition:background .25s}
+.feat-item:last-child{border-right:none}
+.feat-item:hover{background:var(--surface)}
+.feat-icon{font-size:1.7rem;flex-shrink:0}
+.feat-text h4{font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:700;text-transform:uppercase;color:var(--white);letter-spacing:.06em;margin-bottom:.3rem}
+.feat-text p{font-size:.76rem;color:var(--muted);line-height:1.55}
+
+/* ─── TESTIMONIALS ─── */
+#testimonials{padding:6rem 3rem;background:var(--surface)}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem}
+.testi-card{background:var(--card);border:1px solid var(--border);padding:1.8rem;position:relative}
+.testi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--cyan),transparent)}
+.testi-stars{color:var(--cyan);font-size:.82rem;letter-spacing:2px;margin-bottom:.7rem}
+.testi-text{font-size:.87rem;line-height:1.75;color:var(--muted);margin-bottom:1rem;font-style:italic}
+.testi-author{display:flex;align-items:center;gap:.7rem}
+.testi-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--orange));display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:.85rem;color:#000;flex-shrink:0}
+.testi-name{font-size:.8rem;font-weight:500;color:var(--white)}
+.testi-loc{font-size:.67rem;color:var(--muted);letter-spacing:.1em}
+
+/* ─── NEWSLETTER ─── */
+#newsletter{padding:5rem 3rem;text-align:center;position:relative;overflow:hidden}
+#newsletter::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(0,229,255,.05) 0%,transparent 70%);pointer-events:none}
+.nl-form{display:flex;max-width:440px;margin:2rem auto 0;position:relative;z-index:1}
+.nl-form input{flex:1;padding:.85rem 1.2rem;background:var(--surface);border:1px solid var(--border);border-right:none;color:var(--text);font-family:'Barlow',sans-serif;font-size:.87rem;outline:none;transition:border-color .2s}
+.nl-form input:focus{border-color:var(--cyan)}
+.nl-form input::placeholder{color:var(--muted)}
+.nl-form button{padding:.85rem 1.4rem;background:var(--cyan);color:#000;border:none;font-family:'Barlow Condensed',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;transition:background .25s;white-space:nowrap}
+.nl-form button:hover{background:var(--orange);color:#fff}
+.nl-note{font-size:.75rem;color:var(--muted);margin-top:.8rem}
+.nl-success{display:none;color:var(--cyan);font-size:.9rem;margin-top:1rem;font-weight:500}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:1100px){.product-grid{grid-template-columns:repeat(3,1fr)}.cat-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:900px){
+  #hero{grid-template-columns:1fr;min-height:auto}
+  .hero-left{padding:calc(var(--nav-h)+2rem) 1.5rem 3rem}
+  .hero-right{height:55vw;min-height:260px}
+  #categories,#featured,#deal-banner,#features,#testimonials,#newsletter{padding-left:1.5rem;padding-right:1.5rem}
+  #deal-banner{grid-template-columns:1fr;gap:2rem}
+  .features-grid{grid-template-columns:repeat(2,1fr)}
+  .feat-item:nth-child(2){border-right:none}
+  .feat-item:nth-child(3){border-top:1px solid var(--border)}
+  .feat-item:nth-child(4){border-right:none;border-top:1px solid var(--border)}
+  .testi-grid{grid-template-columns:1fr}
+}
+@media(max-width:640px){
+  .product-grid{grid-template-columns:repeat(2,1fr)}
+  .cat-grid{grid-template-columns:repeat(2,1fr)}
+  .nl-form{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+
+<!-- CART DRAWER -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-drawer-header">
+    <h2>Your Cart <span id="cartCount" style="font-family:'Barlow',sans-serif;font-weight:400;font-size:.82rem;color:var(--muted)"></span></h2>
+    <button class="cart-drawer-close" id="cartDrawerClose">✕</button>
+  </div>
+  <div class="cart-drawer-items" id="cartDrawerItems">
+    <div class="cart-drawer-empty"><span>🛒</span>Your cart is empty</div>
+  </div>
+  <div class="cart-drawer-footer">
+    <div class="cart-drawer-total"><span>Total</span><strong id="cartDrawerTotal">₹0</strong></div>
+    <a href="cart.html" class="btn-view-cart">View Full Cart</a>
+    <a href="checkout.html" class="btn-checkout">Checkout Now →</a>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="site-nav" id="siteNav">
+  <a href="index.html" class="nav-logo">VOLT<span>EX</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="product.html">Products</a></li>
+    <li><a href="cart.html">Cart</a></li>
+    <li><a href="account.html">Account</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="nav-btn" id="searchBtn" title="Search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    </button>
+    <a href="account.html" class="nav-btn" title="Account">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </a>
+    <button class="nav-btn" id="cartNavBtn" title="Cart" style="position:relative">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <span class="cart-badge" id="cartBadge">0</span>
+    </button>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Home</a>
+  <a href="shop.html">Shop</a>
+  <a href="cart.html">Cart</a>
+  <a href="account.html">Account</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div><div class="hero-glow2"></div>
+  <div class="hero-left">
+    <p class="hero-eyebrow">New Season Drop — 2026</p>
+    <h1 class="hero-title">
+      GEAR UP<br>
+      <span class="ht2">FOR THE</span><br>
+      <span class="ht3">FUTURE.</span>
+    </h1>
+    <p class="hero-sub">The ultimate destination for tech gadgets, gaming, sports equipment, audio gear, drones, and fitness. All in one store.</p>
+    <div class="hero-ctas">
+      <a href="shop.html" class="btn-primary">Shop Now →</a>
+      <a href="shop.html?filter=sale" class="btn-secondary">View Deals</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hs-item"><strong>50K+</strong><span>Products</span></div>
+      <div class="hs-item"><strong>4.9★</strong><span>Rating</span></div>
+      <div class="hs-item"><strong>2M+</strong><span>Customers</span></div>
+      <div class="hs-item"><strong>24h</strong><span>Delivery</span></div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <img src="https://images.unsplash.com/photo-1593640408182-31c228f8c571?w=1200&q=80" alt="Tech gear"/>
+    <div class="hero-pill">🔥 Flash Sale — Up to 40% Off</div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <span>Free Delivery Over ₹1,999</span><span class="ticker-sep">◆</span>
+    <span>1-Year Warranty on All Electronics</span><span class="ticker-sep">◆</span>
+    <span>EMI Available — 0% Interest</span><span class="ticker-sep">◆</span>
+    <span>24/7 Customer Support</span><span class="ticker-sep">◆</span>
+    <span>Same-Day Dispatch Before 3PM</span><span class="ticker-sep">◆</span>
+    <span>Free Delivery Over ₹1,999</span><span class="ticker-sep">◆</span>
+    <span>1-Year Warranty on All Electronics</span><span class="ticker-sep">◆</span>
+    <span>EMI Available — 0% Interest</span><span class="ticker-sep">◆</span>
+    <span>24/7 Customer Support</span><span class="ticker-sep">◆</span>
+    <span>Same-Day Dispatch Before 3PM</span><span class="ticker-sep">◆</span>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<section id="categories">
+  <div class="reveal">
+    <p class="sec-label">Browse</p>
+    <h2 class="sec-title">Shop by Category</h2>
+  </div>
+  <div class="cat-grid">
+    <a href="shop.html?cat=tech" class="cat-card reveal"><span class="cat-icon">💻</span><span class="cat-name">Tech</span><span class="cat-count">6 products</span></a>
+    <a href="shop.html?cat=audio" class="cat-card reveal"><span class="cat-icon">🎧</span><span class="cat-name">Audio</span><span class="cat-count">3 products</span></a>
+    <a href="shop.html?cat=sports" class="cat-card reveal"><span class="cat-icon">⚽</span><span class="cat-name">Sports</span><span class="cat-count">3 products</span></a>
+    <a href="shop.html?cat=gaming" class="cat-card reveal"><span class="cat-icon">🎮</span><span class="cat-name">Gaming</span><span class="cat-count">3 products</span></a>
+    <a href="shop.html?cat=fitness" class="cat-card reveal"><span class="cat-icon">💪</span><span class="cat-name">Fitness</span><span class="cat-count">3 products</span></a>
+  </div>
+</section>
+
+<!-- FEATURED PRODUCTS -->
+<section id="featured">
+  <div class="products-header reveal">
+    <div><p class="sec-label">Our Store</p><h2 class="sec-title" style="margin-bottom:0">Featured Products</h2></div>
+    <div class="filter-tabs">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="tech">Tech</button>
+      <button class="filter-btn" data-filter="audio">Audio</button>
+      <button class="filter-btn" data-filter="sports">Sports</button>
+      <button class="filter-btn" data-filter="gaming">Gaming</button>
+      <button class="filter-btn" data-filter="fitness">Fitness</button>
+    </div>
+  </div>
+  <div class="product-grid" id="productGrid"></div>
+  <div class="view-all-wrap reveal"><a href="shop.html" class="btn-secondary">View All Products →</a></div>
+</section>
+
+<!-- DEAL BANNER -->
+<section id="deal-banner">
+  <div class="reveal">
+    <p class="sec-label">Limited Time</p>
+    <h2 class="deal-title">DEAL OF<br>THE <span>WEEK</span></h2>
+    <p class="deal-desc">Sony WH-1000XM5 — Industry-leading noise cancellation, 30-hour battery. Our biggest discount ever.</p>
+    <div class="countdown">
+      <div class="cdb"><span class="num" id="cdH">09</span><span class="lbl">Hrs</span></div>
+      <div class="cdb"><span class="num" id="cdM">47</span><span class="lbl">Min</span></div>
+      <div class="cdb"><span class="num" id="cdS">32</span><span class="lbl">Sec</span></div>
+    </div>
+    <button class="btn-primary" onclick="Cart.add(2);renderCartDrawer();openCartDrawer();showToast('Sony WH-1000XM5 added!')">Grab the Deal →</button>
+  </div>
+  <div class="deal-img-wrap reveal">
+    <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800&q=80" alt="Sony WH-1000XM5"/>
+    <div class="deal-badge"><span class="pct">30%</span><span class="off">OFF</span></div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="features-grid">
+    <div class="feat-item reveal"><span class="feat-icon">🚀</span><div class="feat-text"><h4>Same-Day Delivery</h4><p>Order before 3PM for same-day dispatch to major cities.</p></div></div>
+    <div class="feat-item reveal"><span class="feat-icon">🛡️</span><div class="feat-text"><h4>1-Year Warranty</h4><p>Every electronics product includes full manufacturer warranty.</p></div></div>
+    <div class="feat-item reveal"><span class="feat-icon">💳</span><div class="feat-text"><h4>0% EMI</h4><p>Zero-interest EMI on orders above ₹5,000 with leading banks.</p></div></div>
+    <div class="feat-item reveal"><span class="feat-icon">🔄</span><div class="feat-text"><h4>30-Day Returns</h4><p>Not satisfied? Return within 30 days — no questions asked.</p></div></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="reveal" style="text-align:center"><p class="sec-label" style="justify-content:center">Reviews</p><h2 class="sec-title">What Buyers Say</h2></div>
+  <div class="testi-grid">
+    <div class="testi-card reveal"><div class="testi-stars">★★★★★</div><p class="testi-text">"DJI drone arrived next morning. Packaging was bomb-proof and quality is exactly as described. Will definitely buy again."</p><div class="testi-author"><div class="testi-av">RK</div><div><p class="testi-name">Rahul K.</p><p class="testi-loc">Verified Buyer · Mumbai</p></div></div></div>
+    <div class="testi-card reveal"><div class="testi-stars">★★★★★</div><p class="testi-text">"Sony headphones are worth every rupee. Sound quality is insane and the 30-day return policy gave me confidence to buy risk-free."</p><div class="testi-author"><div class="testi-av">SP</div><div><p class="testi-name">Sneha P.</p><p class="testi-loc">Verified Buyer · Bangalore</p></div></div></div>
+    <div class="testi-card reveal"><div class="testi-stars">★★★★★</div><p class="testi-text">"Got the PS5 and gaming chair in one order. Both genuine products at prices that beat Amazon. Support was lightning-fast."</p><div class="testi-author"><div class="testi-av">AM</div><div><p class="testi-name">Arjun M.</p><p class="testi-loc">Verified Buyer · Delhi</p></div></div></div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section id="newsletter">
+  <p class="sec-label reveal" style="justify-content:center">Stay Connected</p>
+  <h2 class="sec-title reveal" style="margin-bottom:.8rem">Get ₹500 Off Your First Order</h2>
+  <p style="color:var(--muted);font-size:.9rem;max-width:380px;margin:0 auto;line-height:1.7">Subscribe for exclusive deals, drops, and tech news. No spam, ever.</p>
+  <form class="nl-form" id="nlForm"><input type="email" id="nlEmail" placeholder="your@email.com" required/><button type="submit">Subscribe</button></form>
+  <p class="nl-note">By subscribing you agree to our Privacy Policy. Unsubscribe anytime.</p>
+  <p class="nl-success" id="nlSuccess">🎉 Your ₹500 coupon is on its way!</p>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-brand"><span class="footer-logo">VOLT<span>EX</span></span><p>Premium tech gadgets, sports gear, audio, gaming peripherals, and fitness equipment delivered across India.</p></div>
+    <div class="footer-col"><h4>Shop</h4><ul><li><a href="shop.html">All Products</a></li><li><a href="shop.html?cat=tech">Tech & Gadgets</a></li><li><a href="shop.html?cat=audio">Audio</a></li><li><a href="shop.html?cat=sports">Sports</a></li><li><a href="shop.html?cat=gaming">Gaming</a></li></ul></div>
+    <div class="footer-col"><h4>Help</h4><ul><li><a href="#">Track Order</a></li><li><a href="#">Shipping Policy</a></li><li><a href="#">Returns</a></li><li><a href="#">Warranty</a></li><li><a href="#">Contact Us</a></li></ul></div>
+    <div class="footer-col"><h4>Company</h4><ul><li><a href="#">About VOLTEX</a></li><li><a href="#">Careers</a></li><li><a href="#">Press</a></li><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 VOLTEX Technologies Pvt. Ltd. All rights reserved.</p><div class="footer-pay"><span class="pay-chip">UPI</span><span class="pay-chip">Visa</span><span class="pay-chip">Mastercard</span><span class="pay-chip">RuPay</span><span class="pay-chip">EMI</span></div></div>
+</footer>
+
+<script src="shared.js"></script>
+<script>
+// ─── NAV ───
+window.addEventListener('scroll',()=>document.getElementById('siteNav').classList.toggle('scrolled',scrollY>60));
+document.getElementById('hamburger').addEventListener('click',function(){this.classList.toggle('open');document.getElementById('mobileMenu').classList.toggle('open');});
+document.querySelectorAll('#mobileMenu a').forEach(a=>a.addEventListener('click',()=>{document.getElementById('hamburger').classList.remove('open');document.getElementById('mobileMenu').classList.remove('open');}));
+
+// ─── CART DRAWER ───
+function openCartDrawer(){document.getElementById('cartDrawer').classList.add('open');document.getElementById('cartOverlay').classList.add('open');document.body.style.overflow='hidden';}
+function closeCartDrawer(){document.getElementById('cartDrawer').classList.remove('open');document.getElementById('cartOverlay').classList.remove('open');document.body.style.overflow='';}
+document.getElementById('cartNavBtn').addEventListener('click',()=>{renderCartDrawer();openCartDrawer();});
+document.getElementById('cartDrawerClose').addEventListener('click',closeCartDrawer);
+document.getElementById('cartOverlay').addEventListener('click',closeCartDrawer);
+
+function renderCartDrawer(){
+  const cart=Cart.get();
+  const el=document.getElementById('cartDrawerItems');
+  document.getElementById('cartCount').textContent=`(${Cart.count()} items)`;
+  document.getElementById('cartDrawerTotal').textContent=fmt(Cart.total());
+  if(!cart.length){el.innerHTML='<div class="cart-drawer-empty"><span>🛒</span>Your cart is empty</div>';return;}
+  el.innerHTML=cart.map(item=>{const p=PRODUCTS.find(x=>x.id===item.id);if(!p)return '';return `
+    <div class="cart-drawer-item">
+      <img src="${p.img}" alt="${p.name}"/>
+      <div class="cdi-info">
+        <span class="cdi-name">${p.name}</span>
+        <span class="cdi-cat">${p.cat}</span>
+        <span class="cdi-price">${fmt(p.price)}</span>
+        <div class="cdi-row">
+          <button class="cdi-qty-btn" onclick="Cart.changeQty(${p.id},-1);renderCartDrawer()">−</button>
+          <span class="cdi-qty-val">${item.qty}</span>
+          <button class="cdi-qty-btn" onclick="Cart.changeQty(${p.id},1);renderCartDrawer()">+</button>
+          <button class="cdi-remove" onclick="Cart.remove(${p.id});renderCartDrawer()">Remove</button>
+        </div>
+      </div>
+    </div>`;}).join('');
+}
+
+// ─── PRODUCTS ───
+function renderProducts(filter='all'){
+  const grid=document.getElementById('productGrid');
+  const list=(filter==='all'?PRODUCTS:PRODUCTS.filter(p=>p.cat===filter)).slice(0,8);
+  grid.innerHTML=list.map(p=>`
+    <div class="product-card reveal">
+      <div class="product-card-img-wrap">
+        <img class="product-card-img" src="${p.img}" alt="${p.name}" loading="lazy"/>
+        ${p.badge?`<span class="product-badge badge-${p.badge}">${p.badge==='new'?'NEW':p.badge==='hot'?'🔥 HOT':'SALE'}</span>`:''}
+        <div class="product-card-actions">
+          <button class="pc-btn-cart" onclick="Cart.add(${p.id});renderCartDrawer();showToast('${p.name.substring(0,20)}… added!')">Add to Cart</button>
+          <button class="pc-btn-wish ${Wishlist.has(p.id)?'wished':''}" onclick="toggleWish(${p.id},this)">
+            <svg viewBox="0 0 24 24" fill="${Wishlist.has(p.id)?'var(--orange)':'none'}" stroke="${Wishlist.has(p.id)?'var(--orange)':'currentColor'}" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="product-card-body" onclick="location.href='product.html?id=${p.id}'" style="cursor:pointer">
+        <p class="pc-cat">${p.cat}</p>
+        <p class="pc-name">${p.name}</p>
+        <div class="pc-prices"><span class="pc-price">${fmt(p.price)}</span>${p.oldPrice?`<span class="pc-old">${fmt(p.oldPrice)}</span>`:''}</div>
+        <div class="stars-row">${starsHTML(p.stars)}<span class="rating-count">(${p.rating})</span></div>
+      </div>
+    </div>`).join('');
+  setTimeout(()=>grid.querySelectorAll('.reveal').forEach(el=>el.classList.add('visible')),60);
+}
+
+function toggleWish(id,btn){
+  const added=Wishlist.toggle(id);
+  btn.classList.toggle('wished',added);
+  const svg=btn.querySelector('svg');
+  svg.setAttribute('fill',added?'var(--orange)':'none');
+  svg.setAttribute('stroke',added?'var(--orange)':'currentColor');
+  showToast(added?'Added to wishlist ♥':'Removed from wishlist');
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderProducts(btn.dataset.filter);
+  });
+});
+
+// ─── COUNTDOWN ───
+function countdown(h,m,s){
+  let t=h*3600+m*60+s;
+  setInterval(()=>{
+    if(t<=0)return;t--;
+    document.getElementById('cdH').textContent=String(Math.floor(t/3600)).padStart(2,'0');
+    document.getElementById('cdM').textContent=String(Math.floor((t%3600)/60)).padStart(2,'0');
+    document.getElementById('cdS').textContent=String(t%60).padStart(2,'0');
+  },1000);
+}
+countdown(9,47,32);
+
+// ─── NEWSLETTER ───
+document.getElementById('nlForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  document.getElementById('nlForm').style.display='none';
+  document.getElementById('nlSuccess').style.display='block';
+  showToast('Welcome! ₹500 coupon sent!');
+});
+
+// ─── REVEAL ───
+const ro=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target);}}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+// ─── INIT ───
+Cart.updateBadge();
+renderProducts('all');
+</script>
+</body>
+</html>
