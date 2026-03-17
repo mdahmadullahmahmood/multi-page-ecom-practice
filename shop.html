@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Shop — VOLTEX</title>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+.shop-layout{display:grid;grid-template-columns:260px 1fr;gap:2rem;padding:2rem 3rem 6rem;max-width:1400px;margin:0 auto}
+/* SIDEBAR */
+.sidebar{position:sticky;top:calc(var(--nav-h)+1.5rem);height:fit-content;display:flex;flex-direction:column;gap:1.5rem}
+.sidebar-block{background:var(--card);border:1px solid var(--border);padding:1.5rem}
+.sidebar-block h3{font-family:'Barlow Condensed',sans-serif;font-size:.85rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--white);margin-bottom:1.2rem;padding-bottom:.8rem;border-bottom:1px solid var(--border)}
+.sidebar-cats{display:flex;flex-direction:column;gap:.3rem}
+.sidebar-cat{display:flex;justify-content:space-between;align-items:center;padding:.5rem .7rem;cursor:pointer;transition:all .2s;font-size:.85rem;color:var(--muted);border:1px solid transparent}
+.sidebar-cat:hover,.sidebar-cat.active{color:var(--white);border-color:var(--border);background:var(--surface2)}
+.sidebar-cat.active{color:var(--cyan);border-color:rgba(0,229,255,.3)}
+.sidebar-cat-count{font-size:.7rem;color:var(--muted);background:var(--surface2);padding:.1rem .4rem}
+.price-range{display:flex;flex-direction:column;gap:.8rem}
+.price-range input[type=range]{width:100%;accent-color:var(--cyan)}
+.price-range-vals{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted)}
+.price-range-max{color:var(--cyan);font-weight:600}
+.brand-list{display:flex;flex-direction:column;gap:.5rem}
+.brand-check{display:flex;align-items:center;gap:.6rem;cursor:pointer;font-size:.84rem;color:var(--muted);transition:color .2s}
+.brand-check:hover,.brand-check.active{color:var(--white)}
+.brand-check input{accent-color:var(--cyan);width:14px;height:14px}
+.sidebar-btn{width:100%;padding:.75rem;background:var(--cyan);color:#000;border:none;font-family:'Barlow Condensed',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;transition:background .25s;margin-top:.5rem}
+.sidebar-btn:hover{background:var(--orange);color:#fff}
+/* MAIN */
+.shop-main{}
+.shop-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem}
+.shop-results{font-size:.84rem;color:var(--muted)}
+.shop-results span{color:var(--cyan);font-weight:600}
+.shop-sort-wrap{display:flex;align-items:center;gap:.8rem}
+.shop-sort-wrap label{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.shop-sort{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:.5rem .8rem;font-family:'Barlow',sans-serif;font-size:.83rem;outline:none;cursor:pointer}
+.shop-sort option{background:var(--surface2)}
+.shop-view-btns{display:flex;gap:.3rem}
+.view-btn{width:34px;height:34px;background:none;border:1px solid var(--border);color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:.85rem}
+.view-btn.active,.view-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.shop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem}
+.shop-grid.list-view{grid-template-columns:1fr}
+.shop-grid.list-view .product-card{display:grid;grid-template-columns:200px 1fr}
+.shop-grid.list-view .product-card-img-wrap{aspect-ratio:1/1;height:200px}
+.shop-grid.list-view .product-card-body{padding:1.5rem}
+.shop-grid.list-view .product-card-actions{position:static;transform:none;display:flex;gap:.5rem;margin-top:1rem}
+.shop-grid.list-view .pc-btn-cart{flex:none;padding:.6rem 1.2rem}
+.no-results{grid-column:1/-1;text-align:center;padding:4rem 1rem;color:var(--muted)}
+.no-results span{display:block;font-size:3rem;margin-bottom:1rem}
+.pagination{display:flex;justify-content:center;gap:.5rem;margin-top:3rem}
+.page-btn{width:38px;height:38px;border:1px solid var(--border);background:none;color:var(--muted);display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:.88rem;transition:all .2s}
+.page-btn.active,.page-btn:hover{background:var(--cyan);color:#000;border-color:var(--cyan)}
+@media(max-width:1024px){.shop-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:900px){.shop-layout{grid-template-columns:1fr;padding:1.5rem}.sidebar{position:static;display:none}.sidebar.show{display:flex}.filter-toggle{display:flex!important}}
+.filter-toggle{display:none;align-items:center;gap:.5rem;padding:.6rem 1rem;border:1px solid var(--border);background:none;color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:.8rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;margin-bottom:1rem;transition:all .2s}
+.filter-toggle:hover{border-color:var(--cyan);color:var(--cyan)}
+@media(max-width:640px){.shop-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div id="toast" class="toast"></div>
+<div class="cart-overlay" id="cartOverlay"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-drawer-header"><h2>Cart <span id="cartCount"></span></h2><button class="cart-drawer-close" id="cartDrawerClose">✕</button></div>
+  <div class="cart-drawer-items" id="cartDrawerItems"><div class="cart-drawer-empty"><span>🛒</span>Cart is empty</div></div>
+  <div class="cart-drawer-footer"><div class="cart-drawer-total"><span>Total</span><strong id="cartDrawerTotal">₹0</strong></div><a href="cart.html" class="btn-view-cart">View Full Cart</a><a href="checkout.html" class="btn-checkout">Checkout →</a></div>
+</div>
+
+<nav class="site-nav" id="siteNav">
+  <a href="index.html" class="nav-logo">VOLT<span>EX</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="shop.html" class="active">Shop</a></li>
+    <li><a href="cart.html">Cart</a></li>
+    <li><a href="account.html">Account</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="account.html" class="nav-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></a>
+    <button class="nav-btn" id="cartNavBtn" style="position:relative"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span class="cart-badge" id="cartBadge">0</span></button>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu"><a href="index.html">Home</a><a href="shop.html">Shop</a><a href="cart.html">Cart</a><a href="account.html">Account</a></div>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="page-header-breadcrumb"><a href="index.html">Home</a><span>/</span><span>Shop</span></div>
+    <h1 id="pageTitle">All Products</h1>
+  </div>
+</div>
+
+<div class="shop-layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-block">
+      <h3>Categories</h3>
+      <div class="sidebar-cats">
+        <div class="sidebar-cat active" data-cat="all"><span>All Products</span><span class="sidebar-cat-count">16</span></div>
+        <div class="sidebar-cat" data-cat="tech"><span>Tech & Gadgets</span><span class="sidebar-cat-count">6</span></div>
+        <div class="sidebar-cat" data-cat="audio"><span>Audio & Sound</span><span class="sidebar-cat-count">3</span></div>
+        <div class="sidebar-cat" data-cat="sports"><span>Sports Gear</span><span class="sidebar-cat-count">3</span></div>
+        <div class="sidebar-cat" data-cat="gaming"><span>Gaming</span><span class="sidebar-cat-count">3</span></div>
+        <div class="sidebar-cat" data-cat="fitness"><span>Fitness</span><span class="sidebar-cat-count">3</span></div>
+      </div>
+    </div>
+    <div class="sidebar-block">
+      <h3>Price Range</h3>
+      <div class="price-range">
+        <input type="range" id="priceRange" min="0" max="200000" value="200000" step="1000" oninput="document.getElementById('priceMax').textContent='₹'+parseInt(this.value).toLocaleString('en-IN');applyFilters()"/>
+        <div class="price-range-vals"><span>₹0</span><span class="price-range-max" id="priceMax">₹2,00,000</span></div>
+      </div>
+    </div>
+    <div class="sidebar-block">
+      <h3>Brand</h3>
+      <div class="brand-list" id="brandList"></div>
+    </div>
+    <div class="sidebar-block">
+      <h3>Offers</h3>
+      <div class="brand-list">
+        <label class="brand-check"><input type="checkbox" id="onSaleOnly"/> On Sale Only</label>
+        <label class="brand-check"><input type="checkbox" id="inStockOnly" checked/> In Stock Only</label>
+        <label class="brand-check"><input type="checkbox" id="newOnly"/> New Arrivals</label>
+      </div>
+      <button class="sidebar-btn" onclick="clearFilters()">Clear Filters</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="shop-main">
+    <button class="filter-toggle" id="filterToggle">☰ Filters</button>
+    <div class="shop-toolbar">
+      <p class="shop-results">Showing <span id="resultCount">0</span> products</p>
+      <div class="shop-sort-wrap">
+        <label>Sort:</label>
+        <select class="shop-sort" id="shopSort" onchange="applyFilters()">
+          <option value="default">Featured</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="rating">Top Rated</option>
+          <option value="name">Name A-Z</option>
+        </select>
+        <div class="shop-view-btns">
+          <button class="view-btn active" id="gridViewBtn" title="Grid View">⊞</button>
+          <button class="view-btn" id="listViewBtn" title="List View">☰</button>
+        </div>
+      </div>
+    </div>
+    <div class="shop-grid" id="shopGrid"></div>
+    <div class="pagination" id="pagination"></div>
+  </main>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-brand"><span class="footer-logo">VOLT<span>EX</span></span><p>Your premium store for tech, sports, audio, gaming and fitness gear.</p></div>
+    <div class="footer-col"><h4>Shop</h4><ul><li><a href="shop.html">All Products</a></li><li><a href="shop.html?cat=tech">Tech</a></li><li><a href="shop.html?cat=audio">Audio</a></li><li><a href="shop.html?cat=gaming">Gaming</a></li></ul></div>
+    <div class="footer-col"><h4>Help</h4><ul><li><a href="#">Track Order</a></li><li><a href="#">Returns</a></li><li><a href="#">Contact</a></li></ul></div>
+    <div class="footer-col"><h4>Pages</h4><ul><li><a href="index.html">Home</a></li><li><a href="cart.html">Cart</a></li><li><a href="checkout.html">Checkout</a></li><li><a href="account.html">Account</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 VOLTEX Technologies Pvt. Ltd.</p><div class="footer-pay"><span class="pay-chip">UPI</span><span class="pay-chip">Visa</span><span class="pay-chip">Mastercard</span><span class="pay-chip">EMI</span></div></div>
+</footer>
+
+<script src="shared.js"></script>
+<script>
+window.addEventListener('scroll',()=>document.getElementById('siteNav').classList.toggle('scrolled',scrollY>60));
+document.getElementById('hamburger').addEventListener('click',function(){this.classList.toggle('open');document.getElementById('mobileMenu').classList.toggle('open');});
+document.getElementById('filterToggle').addEventListener('click',()=>document.getElementById('sidebar').classList.toggle('show'));
+
+// CART DRAWER
+function openCartDrawer(){document.getElementById('cartDrawer').classList.add('open');document.getElementById('cartOverlay').classList.add('open');document.body.style.overflow='hidden';}
+function closeCartDrawer(){document.getElementById('cartDrawer').classList.remove('open');document.getElementById('cartOverlay').classList.remove('open');document.body.style.overflow='';}
+document.getElementById('cartNavBtn').addEventListener('click',()=>{renderCartDrawer();openCartDrawer();});
+document.getElementById('cartDrawerClose').addEventListener('click',closeCartDrawer);
+document.getElementById('cartOverlay').addEventListener('click',closeCartDrawer);
+
+function renderCartDrawer(){
+  const cart=Cart.get();
+  document.getElementById('cartCount').textContent=`(${Cart.count()})`;
+  document.getElementById('cartDrawerTotal').textContent=fmt(Cart.total());
+  const el=document.getElementById('cartDrawerItems');
+  if(!cart.length){el.innerHTML='<div class="cart-drawer-empty"><span>🛒</span>Cart is empty</div>';return;}
+  el.innerHTML=cart.map(item=>{const p=PRODUCTS.find(x=>x.id===item.id);if(!p)return'';return`<div class="cart-drawer-item"><img src="${p.img}" alt="${p.name}"/><div class="cdi-info"><span class="cdi-name">${p.name}</span><span class="cdi-price">${fmt(p.price)}</span><div class="cdi-row"><button class="cdi-qty-btn" onclick="Cart.changeQty(${p.id},-1);renderCartDrawer()">−</button><span class="cdi-qty-val">${item.qty}</span><button class="cdi-qty-btn" onclick="Cart.changeQty(${p.id},1);renderCartDrawer()">+</button><button class="cdi-remove" onclick="Cart.remove(${p.id});renderCartDrawer()">Remove</button></div></div></div>`;}).join('');
+}
+
+// FILTERS STATE
+let activeCat='all',isListView=false;
+
+// PARSE URL PARAMS
+const params=new URLSearchParams(location.search);
+if(params.get('cat')){activeCat=params.get('cat');document.getElementById('pageTitle').textContent=activeCat.charAt(0).toUpperCase()+activeCat.slice(1);}
+if(params.get('filter')==='sale'){document.getElementById('onSaleOnly').checked=true;}
+
+// SIDEBAR CATS
+document.querySelectorAll('.sidebar-cat').forEach(el=>{
+  el.addEventListener('click',()=>{
+    activeCat=el.dataset.cat;
+    document.querySelectorAll('.sidebar-cat').forEach(c=>c.classList.remove('active'));
+    el.classList.add('active');
+    applyFilters();
+  });
+  if(el.dataset.cat===activeCat)el.classList.add('active');
+});
+
+// BRANDS
+const brands=[...new Set(PRODUCTS.map(p=>p.brand))].sort();
+document.getElementById('brandList').innerHTML=brands.map(b=>`<label class="brand-check"><input type="checkbox" data-brand="${b}"/> ${b}</label>`).join('');
+document.querySelectorAll('[data-brand]').forEach(cb=>cb.addEventListener('change',applyFilters));
+document.getElementById('onSaleOnly').addEventListener('change',applyFilters);
+document.getElementById('inStockOnly').addEventListener('change',applyFilters);
+document.getElementById('newOnly').addEventListener('change',applyFilters);
+
+// VIEW TOGGLE
+document.getElementById('gridViewBtn').addEventListener('click',()=>{isListView=false;document.getElementById('shopGrid').classList.remove('list-view');document.getElementById('gridViewBtn').classList.add('active');document.getElementById('listViewBtn').classList.remove('active');});
+document.getElementById('listViewBtn').addEventListener('click',()=>{isListView=true;document.getElementById('shopGrid').classList.add('list-view');document.getElementById('listViewBtn').classList.add('active');document.getElementById('gridViewBtn').classList.remove('active');});
+
+let currentPage=1;const PER_PAGE=12;
+
+function applyFilters(){
+  let list=[...PRODUCTS];
+  if(activeCat!=='all')list=list.filter(p=>p.cat===activeCat);
+  const priceMax=parseInt(document.getElementById('priceRange').value);
+  list=list.filter(p=>p.price<=priceMax);
+  if(document.getElementById('onSaleOnly').checked)list=list.filter(p=>p.oldPrice);
+  if(document.getElementById('newOnly').checked)list=list.filter(p=>p.badge==='new');
+  const selBrands=[...document.querySelectorAll('[data-brand]:checked')].map(c=>c.dataset.brand);
+  if(selBrands.length)list=list.filter(p=>selBrands.includes(p.brand));
+  const sort=document.getElementById('shopSort').value;
+  if(sort==='price-asc')list.sort((a,b)=>a.price-b.price);
+  else if(sort==='price-desc')list.sort((a,b)=>b.price-a.price);
+  else if(sort==='rating')list.sort((a,b)=>b.stars-a.stars||(b.rating-a.rating));
+  else if(sort==='name')list.sort((a,b)=>a.name.localeCompare(b.name));
+  renderGrid(list);
+  renderPagination(list.length);
+}
+
+function renderGrid(list){
+  const grid=document.getElementById('shopGrid');
+  document.getElementById('resultCount').textContent=list.length;
+  const page=list.slice((currentPage-1)*PER_PAGE,currentPage*PER_PAGE);
+  if(!page.length){grid.innerHTML='<div class="no-results"><span>🔍</span>No products match your filters.</div>';return;}
+  grid.innerHTML=page.map(p=>`
+    <div class="product-card">
+      <div class="product-card-img-wrap">
+        <img class="product-card-img" src="${p.img}" alt="${p.name}" loading="lazy"/>
+        ${p.badge?`<span class="product-badge badge-${p.badge}">${p.badge==='new'?'NEW':p.badge==='hot'?'🔥 HOT':'SALE'}</span>`:''}
+        <div class="product-card-actions">
+          <button class="pc-btn-cart" onclick="Cart.add(${p.id});renderCartDrawer();showToast('Added to cart!')">Add to Cart</button>
+          <button class="pc-btn-wish ${Wishlist.has(p.id)?'wished':''}" onclick="toggleWish(${p.id},this)">
+            <svg viewBox="0 0 24 24" fill="${Wishlist.has(p.id)?'var(--orange)':'none'}" stroke="${Wishlist.has(p.id)?'var(--orange)':'currentColor'}" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="product-card-body" onclick="location.href='product.html?id=${p.id}'" style="cursor:pointer">
+        <p class="pc-cat">${p.cat}</p>
+        <p class="pc-name">${p.name}</p>
+        <div class="pc-prices"><span class="pc-price">${fmt(p.price)}</span>${p.oldPrice?`<span class="pc-old">${fmt(p.oldPrice)}</span>`:''}</div>
+        <div class="stars-row">${starsHTML(p.stars)}<span class="rating-count">(${p.rating})</span></div>
+        ${isListView?`<p style="font-size:.82rem;color:var(--muted);margin-top:.6rem;line-height:1.6">${p.desc}</p>`:''}
+      </div>
+    </div>`).join('');
+}
+
+function renderPagination(total){
+  const pages=Math.ceil(total/PER_PAGE);
+  const el=document.getElementById('pagination');
+  if(pages<=1){el.innerHTML='';return;}
+  el.innerHTML=Array.from({length:pages},(_,i)=>`<button class="page-btn ${i+1===currentPage?'active':''}" onclick="currentPage=${i+1};applyFilters()">${i+1}</button>`).join('');
+}
+
+function toggleWish(id,btn){
+  const added=Wishlist.toggle(id);
+  btn.classList.toggle('wished',added);
+  const svg=btn.querySelector('svg');svg.setAttribute('fill',added?'var(--orange)':'none');svg.setAttribute('stroke',added?'var(--orange)':'currentColor');
+  showToast(added?'Added to wishlist ♥':'Removed from wishlist');
+}
+
+function clearFilters(){
+  activeCat='all';currentPage=1;
+  document.querySelectorAll('.sidebar-cat').forEach(c=>c.classList.remove('active'));
+  document.querySelector('[data-cat="all"]').classList.add('active');
+  document.getElementById('priceRange').value=200000;
+  document.getElementById('priceMax').textContent='₹2,00,000';
+  document.querySelectorAll('[data-brand]').forEach(c=>c.checked=false);
+  document.getElementById('onSaleOnly').checked=false;
+  document.getElementById('newOnly').checked=false;
+  applyFilters();
+}
+
+Cart.updateBadge();
+applyFilters();
+</script>
+</body>
+</html>
