@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Account — VOLTEX</title>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+/* AUTH */
+.auth-wrap{max-width:460px;margin:0 auto;padding:3rem 1.5rem 6rem}
+.auth-tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:2rem}
+.auth-tab{flex:1;padding:.8rem;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:.88rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .25s}
+.auth-tab.active{color:var(--cyan);border-bottom-color:var(--cyan)}
+.auth-form{display:none;flex-direction:column;gap:1.1rem}
+.auth-form.active{display:flex}
+.auth-form h2{font-family:'Barlow Condensed',sans-serif;font-size:1.5rem;font-weight:800;text-transform:uppercase;color:var(--white);margin-bottom:.5rem}
+.auth-form p{font-size:.85rem;color:var(--muted);line-height:1.6;margin-bottom:.5rem}
+.auth-field{display:flex;flex-direction:column;gap:.4rem}
+.auth-field label{font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.auth-field input{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:.75rem 1rem;font-family:'Barlow',sans-serif;font-size:.87rem;outline:none;transition:border-color .2s;width:100%}
+.auth-field input:focus{border-color:var(--cyan)}
+.auth-field input::placeholder{color:var(--muted)}
+.auth-btn{width:100%;padding:1rem;background:var(--cyan);color:#000;border:none;font-family:'Barlow Condensed',sans-serif;font-size:.88rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;transition:all .25s;clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%)}
+.auth-btn:hover{background:var(--orange);color:#fff}
+.auth-divider{text-align:center;font-size:.78rem;color:var(--muted);position:relative}
+.auth-divider::before,.auth-divider::after{content:'';position:absolute;top:50%;width:40%;height:1px;background:var(--border)}
+.auth-divider::before{left:0}.auth-divider::after{right:0}
+.auth-social{display:flex;gap:.8rem}
+.auth-social-btn{flex:1;padding:.75rem;border:1px solid var(--border);background:none;color:var(--text);font-family:'Barlow Condensed',sans-serif;font-size:.8rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.5rem}
+.auth-social-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+/* ACCOUNT DASHBOARD */
+#dashboard{display:none;max-width:1200px;margin:0 auto;padding:2rem 3rem 6rem}
+.dash-layout{display:grid;grid-template-columns:240px 1fr;gap:2rem}
+.dash-sidebar{position:sticky;top:calc(var(--nav-h)+1rem);height:fit-content}
+.dash-nav{background:var(--card);border:1px solid var(--border)}
+.dash-user{padding:1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:1rem}
+.dash-avatar{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--orange));display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:1.1rem;color:#000;flex-shrink:0}
+.dash-user-name{font-size:.92rem;font-weight:500;color:var(--white)}
+.dash-user-email{font-size:.74rem;color:var(--muted)}
+.dash-menu-item{display:flex;align-items:center;gap:.8rem;padding:.85rem 1.4rem;font-size:.84rem;color:var(--muted);cursor:pointer;border-left:2px solid transparent;transition:all .2s}
+.dash-menu-item:hover,.dash-menu-item.active{color:var(--white);border-left-color:var(--cyan);background:rgba(0,229,255,.04)}
+.dash-menu-item.active{color:var(--cyan)}
+.dash-menu-icon{font-size:1rem;width:20px;text-align:center}
+/* DASH PANELS */
+.dash-panel{display:none}
+.dash-panel.active{display:block}
+.dash-panel h2{font-family:'Barlow Condensed',sans-serif;font-size:1.5rem;font-weight:800;text-transform:uppercase;color:var(--white);margin-bottom:1.5rem;letter-spacing:.06em}
+/* OVERVIEW */
+.overview-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem}
+.ov-card{background:var(--card);border:1px solid var(--border);padding:1.5rem;text-align:center}
+.ov-card-num{font-family:'Barlow Condensed',sans-serif;font-size:2.2rem;font-weight:800;color:var(--cyan);display:block}
+.ov-card-label{font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+/* ORDERS */
+.orders-table{width:100%;border-collapse:collapse}
+.orders-table th{text-align:left;padding:.7rem 1rem;font-family:'Barlow Condensed',sans-serif;font-size:.75rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);background:var(--surface);border:1px solid var(--border)}
+.orders-table td{padding:.85rem 1rem;border:1px solid var(--border);font-size:.84rem;vertical-align:middle}
+.orders-table tr{background:var(--card);transition:background .2s}
+.orders-table tr:hover{background:var(--surface)}
+.order-status{display:inline-block;padding:.2rem .6rem;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;font-weight:700}
+.status-delivered{background:rgba(0,200,83,.12);color:var(--green);border:1px solid rgba(0,200,83,.3)}
+.status-shipped{background:rgba(0,229,255,.1);color:var(--cyan);border:1px solid rgba(0,229,255,.25)}
+.status-processing{background:rgba(255,107,43,.1);color:var(--orange);border:1px solid rgba(255,107,43,.25)}
+/* WISHLIST */
+.wish-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+/* SETTINGS */
+.settings-form{background:var(--card);border:1px solid var(--border);padding:2rem;display:flex;flex-direction:column;gap:1.2rem}
+.settings-form h3{font-family:'Barlow Condensed',sans-serif;font-size:.95rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--white);margin-bottom:.5rem;padding-bottom:.8rem;border-bottom:1px solid var(--border)}
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.sf-group{display:flex;flex-direction:column;gap:.4rem}
+.sf-label{font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.sf-input{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:.7rem .9rem;font-family:'Barlow',sans-serif;font-size:.87rem;outline:none;transition:border-color .2s}
+.sf-input:focus{border-color:var(--cyan)}
+.sf-save{align-self:flex-start;padding:.75rem 2rem;background:var(--cyan);color:#000;border:none;font-family:'Barlow Condensed',sans-serif;font-size:.82rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;transition:background .25s}
+.sf-save:hover{background:var(--orange);color:#fff}
+@media(max-width:900px){
+  #dashboard{padding:1.5rem}
+  .dash-layout{grid-template-columns:1fr}
+  .dash-sidebar{position:static}
+  .overview-cards{grid-template-columns:repeat(2,1fr)}
+  .wish-grid{grid-template-columns:repeat(2,1fr)}
+  .settings-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div id="toast" class="toast"></div>
+
+<nav class="site-nav" id="siteNav">
+  <a href="index.html" class="nav-logo">VOLT<span>EX</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="cart.html">Cart</a></li>
+    <li><a href="account.html" class="active">Account</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="cart.html" class="nav-btn" style="position:relative"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span class="cart-badge" id="cartBadge">0</span></a>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu"><a href="index.html">Home</a><a href="shop.html">Shop</a><a href="cart.html">Cart</a></div>
+
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="page-header-breadcrumb"><a href="index.html">Home</a><span>/</span><span>Account</span></div>
+    <h1 id="pageHeading">My Account</h1>
+  </div>
+</div>
+
+<!-- AUTH SECTION -->
+<div class="auth-wrap" id="authSection">
+  <div class="auth-tabs">
+    <div class="auth-tab active" onclick="switchAuthTab('login')">Sign In</div>
+    <div class="auth-tab" onclick="switchAuthTab('register')">Create Account</div>
+  </div>
+
+  <!-- LOGIN -->
+  <form class="auth-form active" id="loginForm" onsubmit="handleLogin(event)">
+    <h2>Welcome Back</h2>
+    <p>Sign in to access your orders, wishlist, and account settings.</p>
+    <div class="auth-field"><label>Email</label><input type="email" id="loginEmail" placeholder="you@email.com" required/></div>
+    <div class="auth-field"><label>Password</label><input type="password" id="loginPass" placeholder="••••••••" required/></div>
+    <button type="submit" class="auth-btn">Sign In →</button>
+    <div class="auth-divider">or continue with</div>
+    <div class="auth-social">
+      <button type="button" class="auth-social-btn" onclick="socialLogin('Google')">🌐 Google</button>
+      <button type="button" class="auth-social-btn" onclick="socialLogin('Apple')">🍎 Apple</button>
+    </div>
+    <p style="text-align:center;font-size:.8rem;color:var(--muted)">Demo: use any email & password</p>
+  </form>
+
+  <!-- REGISTER -->
+  <form class="auth-form" id="registerForm" onsubmit="handleRegister(event)">
+    <h2>Join VOLTEX</h2>
+    <p>Create your account to track orders and get exclusive deals.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+      <div class="auth-field"><label>First Name</label><input id="regFirst" placeholder="Rahul" required/></div>
+      <div class="auth-field"><label>Last Name</label><input id="regLast" placeholder="Kumar" required/></div>
+    </div>
+    <div class="auth-field"><label>Email</label><input type="email" id="regEmail" placeholder="you@email.com" required/></div>
+    <div class="auth-field"><label>Password</label><input type="password" id="regPass" placeholder="Min 8 characters" required minlength="8"/></div>
+    <div class="auth-field"><label>Confirm Password</label><input type="password" id="regConfirm" placeholder="••••••••" required/></div>
+    <button type="submit" class="auth-btn">Create Account →</button>
+    <p style="font-size:.75rem;color:var(--muted);text-align:center">By registering you agree to our <a href="#" style="color:var(--cyan)">Terms</a> and <a href="#" style="color:var(--cyan)">Privacy Policy</a></p>
+  </form>
+</div>
+
+<!-- DASHBOARD SECTION -->
+<div id="dashboard">
+  <div class="dash-layout">
+    <!-- SIDEBAR -->
+    <div class="dash-sidebar">
+      <div class="dash-nav">
+        <div class="dash-user">
+          <div class="dash-avatar" id="dashAvatar">RK</div>
+          <div><p class="dash-user-name" id="dashName">Rahul Kumar</p><p class="dash-user-email" id="dashEmail">rahul@email.com</p></div>
+        </div>
+        <div class="dash-menu-item active" onclick="switchPanel('overview')"><span class="dash-menu-icon">📊</span>Overview</div>
+        <div class="dash-menu-item" onclick="switchPanel('orders')"><span class="dash-menu-icon">📦</span>My Orders</div>
+        <div class="dash-menu-item" onclick="switchPanel('wishlist')"><span class="dash-menu-icon">❤️</span>Wishlist <span id="wishCount" style="margin-left:auto;background:var(--orange);color:#fff;padding:.1rem .4rem;font-size:.65rem;border-radius:2px"></span></div>
+        <div class="dash-menu-item" onclick="switchPanel('addresses')"><span class="dash-menu-icon">📍</span>Addresses</div>
+        <div class="dash-menu-item" onclick="switchPanel('settings')"><span class="dash-menu-icon">⚙️</span>Settings</div>
+        <div class="dash-menu-item" onclick="logout()" style="border-top:1px solid var(--border);margin-top:.5rem"><span class="dash-menu-icon">🚪</span>Sign Out</div>
+      </div>
+    </div>
+    <!-- PANELS -->
+    <div>
+      <!-- OVERVIEW -->
+      <div class="dash-panel active" id="panelOverview">
+        <h2>Overview</h2>
+        <div class="overview-cards">
+          <div class="ov-card"><span class="ov-card-num" id="ovOrders">4</span><span class="ov-card-label">Total Orders</span></div>
+          <div class="ov-card"><span class="ov-card-num" id="ovWish">0</span><span class="ov-card-label">Wishlist Items</span></div>
+          <div class="ov-card"><span class="ov-card-num">₹500</span><span class="ov-card-label">Reward Credits</span></div>
+        </div>
+        <h2 style="font-size:1.1rem;margin-bottom:1rem">Recent Orders</h2>
+        <div id="recentOrdersMini"></div>
+      </div>
+
+      <!-- ORDERS -->
+      <div class="dash-panel" id="panelOrders">
+        <h2>My Orders</h2>
+        <div style="overflow-x:auto">
+          <table class="orders-table" id="ordersTable"></table>
+        </div>
+      </div>
+
+      <!-- WISHLIST -->
+      <div class="dash-panel" id="panelWishlist">
+        <h2>My Wishlist</h2>
+        <div class="wish-grid" id="wishGrid"></div>
+        <div id="wishEmpty" style="display:none;text-align:center;padding:3rem;color:var(--muted)">
+          <p style="font-size:2rem;margin-bottom:1rem">💔</p>
+          <p>Your wishlist is empty. <a href="shop.html" style="color:var(--cyan)">Browse products →</a></p>
+        </div>
+      </div>
+
+      <!-- ADDRESSES -->
+      <div class="dash-panel" id="panelAddresses">
+        <h2>Saved Addresses</h2>
+        <div style="background:var(--card);border:1px solid var(--border);padding:1.5rem;margin-bottom:1rem">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem">
+            <span style="font-family:'Barlow Condensed',sans-serif;font-size:.75rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)">Default</span>
+            <button onclick="showToast('Edit address (demo)')" style="background:none;border:none;color:var(--muted);font-size:.78rem;text-decoration:underline;cursor:pointer">Edit</button>
+          </div>
+          <p style="font-size:.88rem;color:var(--white);font-weight:500">Rahul Kumar</p>
+          <p style="font-size:.84rem;color:var(--muted);line-height:1.7">12 Jubilee Hills Road,<br/>Hyderabad, Telangana — 500033<br/>+91 98765 43210</p>
+        </div>
+        <button class="btn-secondary" onclick="showToast('Add address (demo)')">+ Add New Address</button>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="dash-panel" id="panelSettings">
+        <h2>Account Settings</h2>
+        <div class="settings-form">
+          <h3>Personal Information</h3>
+          <div class="settings-grid">
+            <div class="sf-group"><label class="sf-label">First Name</label><input class="sf-input" id="sfFirst"/></div>
+            <div class="sf-group"><label class="sf-label">Last Name</label><input class="sf-input" id="sfLast"/></div>
+            <div class="sf-group"><label class="sf-label">Email</label><input class="sf-input" id="sfEmail" type="email"/></div>
+            <div class="sf-group"><label class="sf-label">Phone</label><input class="sf-input" id="sfPhone" placeholder="+91 98765 43210"/></div>
+          </div>
+          <button class="sf-save" onclick="saveSettings()">Save Changes</button>
+        </div>
+        <div class="settings-form" style="margin-top:1.2rem">
+          <h3>Change Password</h3>
+          <div class="sf-group"><label class="sf-label">Current Password</label><input class="sf-input" type="password" placeholder="••••••••"/></div>
+          <div class="sf-group"><label class="sf-label">New Password</label><input class="sf-input" type="password" placeholder="Min 8 characters"/></div>
+          <div class="sf-group"><label class="sf-label">Confirm Password</label><input class="sf-input" type="password" placeholder="••••••••"/></div>
+          <button class="sf-save" onclick="showToast('Password updated!')">Update Password</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div class="footer-brand"><span class="footer-logo">VOLT<span>EX</span></span><p>Your account, your orders, your wishlist — all in one place.</p></div>
+    <div class="footer-col"><h4>Shop</h4><ul><li><a href="shop.html">All Products</a></li><li><a href="shop.html?cat=tech">Tech</a></li></ul></div>
+    <div class="footer-col"><h4>Help</h4><ul><li><a href="#">Returns</a></li><li><a href="#">Contact</a></li></ul></div>
+    <div class="footer-col"><h4>Pages</h4><ul><li><a href="index.html">Home</a></li><li><a href="cart.html">Cart</a></li><li><a href="checkout.html">Checkout</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 VOLTEX Technologies Pvt. Ltd.</p></div>
+</footer>
+
+<script src="shared.js"></script>
+<script>
+window.addEventListener('scroll',()=>document.getElementById('siteNav').classList.toggle('scrolled',scrollY>60));
+document.getElementById('hamburger').addEventListener('click',function(){this.classList.toggle('open');document.getElementById('mobileMenu').classList.toggle('open');});
+
+// MOCK ORDERS DATA
+const mockOrders=[
+  {id:'VTX-20260101',date:'Jan 15, 2026',items:'DJI Mini 4 Pro + JBL Charge 6',total:89998,status:'delivered'},
+  {id:'VTX-20260215',date:'Feb 15, 2026',items:'Apple MacBook Pro M4',total:199900,status:'delivered'},
+  {id:'VTX-20260301',date:'Mar 01, 2026',items:'Sony WH-1000XM5 × 2',total:49998,status:'shipped'},
+  {id:'VTX-20260310',date:'Mar 10, 2026',items:'Garmin Fenix 8',total:89999,status:'processing'},
+];
+
+// AUTH
+let loggedIn=!!localStorage.getItem('voltex_user');
+let currentUser=JSON.parse(localStorage.getItem('voltex_user')||'{}');
+
+function switchAuthTab(tab){
+  document.querySelectorAll('.auth-tab').forEach((t,i)=>t.classList.toggle('active',i===(tab==='login'?0:1)));
+  document.getElementById('loginForm').classList.toggle('active',tab==='login');
+  document.getElementById('registerForm').classList.toggle('active',tab==='register');
+}
+
+function handleLogin(e){
+  e.preventDefault();
+  const email=document.getElementById('loginEmail').value;
+  const name=email.split('@')[0].replace(/[^a-z]/gi,' ').replace(/\b\w/g,c=>c.toUpperCase());
+  loginUser({name,email,initials:name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase()});
+}
+
+function handleRegister(e){
+  e.preventDefault();
+  const pass=document.getElementById('regPass').value;
+  const conf=document.getElementById('regConfirm').value;
+  if(pass!==conf){showToast('Passwords do not match','error');return;}
+  const first=document.getElementById('regFirst').value;
+  const last=document.getElementById('regLast').value;
+  const email=document.getElementById('regEmail').value;
+  loginUser({name:first+' '+last,email,initials:(first[0]+(last[0]||'')).toUpperCase()});
+  showToast('Account created! Welcome to VOLTEX 🎉');
+}
+
+function socialLogin(provider){
+  loginUser({name:'Demo User',email:'demo@voltex.in',initials:'DU'});
+  showToast('Signed in with '+provider);
+}
+
+function loginUser(user){
+  localStorage.setItem('voltex_user',JSON.stringify(user));
+  loggedIn=true;currentUser=user;
+  showDashboard(user);
+}
+
+function logout(){
+  localStorage.removeItem('voltex_user');
+  loggedIn=false;currentUser={};
+  document.getElementById('authSection').style.display='block';
+  document.getElementById('dashboard').style.display='none';
+  document.getElementById('pageHeading').textContent='My Account';
+  showToast('Signed out successfully','info');
+}
+
+function showDashboard(user){
+  document.getElementById('authSection').style.display='none';
+  document.getElementById('dashboard').style.display='block';
+  document.getElementById('pageHeading').textContent='My Account';
+  document.getElementById('dashName').textContent=user.name||'User';
+  document.getElementById('dashEmail').textContent=user.email||'';
+  document.getElementById('dashAvatar').textContent=user.initials||'U';
+  document.getElementById('sfFirst').value=(user.name||'').split(' ')[0]||'';
+  document.getElementById('sfLast').value=(user.name||'').split(' ').slice(1).join(' ')||'';
+  document.getElementById('sfEmail').value=user.email||'';
+  renderOrders();renderWishlist();
+  const wc=Wishlist.count();
+  document.getElementById('ovWish').textContent=wc;
+  document.getElementById('wishCount').textContent=wc||'';
+}
+
+function switchPanel(panel){
+  document.querySelectorAll('.dash-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.dash-menu-item').forEach(m=>m.classList.remove('active'));
+  document.getElementById('panel'+panel.charAt(0).toUpperCase()+panel.slice(1)).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+function renderOrders(){
+  const tbl=document.getElementById('ordersTable');
+  tbl.innerHTML=`<thead><tr><th>Order ID</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th></tr></thead>
+    <tbody>${mockOrders.map(o=>`<tr><td style="color:var(--cyan);font-family:'Barlow Condensed',sans-serif">${o.id}</td><td>${o.date}</td><td style="max-width:200px">${o.items}</td><td style="font-family:'Barlow Condensed',sans-serif;font-weight:700">${fmt(o.total)}</td><td><span class="order-status status-${o.status}">${o.status}</span></td></tr>`).join('')}</tbody>`;
+  document.getElementById('recentOrdersMini').innerHTML=`<div style="overflow-x:auto"><table class="orders-table"><thead><tr><th>Order</th><th>Items</th><th>Total</th><th>Status</th></tr></thead><tbody>${mockOrders.slice(0,3).map(o=>`<tr><td style="color:var(--cyan)">${o.id}</td><td>${o.items}</td><td style="font-family:'Barlow Condensed',sans-serif;font-weight:700">${fmt(o.total)}</td><td><span class="order-status status-${o.status}">${o.status}</span></td></tr>`).join('')}</tbody></table></div>`;
+}
+
+function renderWishlist(){
+  const ids=Wishlist.get();
+  const grid=document.getElementById('wishGrid');
+  const empty=document.getElementById('wishEmpty');
+  if(!ids.length){grid.style.display='none';empty.style.display='block';return;}
+  grid.style.display='grid';empty.style.display='none';
+  const prods=ids.map(id=>PRODUCTS.find(p=>p.id===id)).filter(Boolean);
+  grid.innerHTML=prods.map(p=>`
+    <div class="product-card">
+      <div class="product-card-img-wrap"><img class="product-card-img" src="${p.img}" alt="${p.name}" loading="lazy"/></div>
+      <div class="product-card-body">
+        <p class="pc-cat">${p.cat}</p>
+        <p class="pc-name" onclick="location.href='product.html?id=${p.id}'" style="cursor:pointer">${p.name}</p>
+        <div class="pc-prices"><span class="pc-price">${fmt(p.price)}</span></div>
+        <div style="display:flex;gap:.5rem;margin-top:.7rem">
+          <button onclick="Cart.add(${p.id});showToast('Added to cart!')" style="flex:1;padding:.5rem;background:var(--cyan);color:#000;border:none;font-family:'Barlow Condensed',sans-serif;font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;cursor:pointer">Add to Cart</button>
+          <button onclick="Wishlist.toggle(${p.id});renderWishlist();document.getElementById('ovWish').textContent=Wishlist.count()" style="padding:.5rem .7rem;background:none;border:1px solid var(--border);color:var(--muted);cursor:pointer;font-size:.9rem" title="Remove">✕</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function saveSettings(){
+  const user={...currentUser,name:document.getElementById('sfFirst').value+' '+document.getElementById('sfLast').value,email:document.getElementById('sfEmail').value};
+  localStorage.setItem('voltex_user',JSON.stringify(user));currentUser=user;
+  document.getElementById('dashName').textContent=user.name;
+  document.getElementById('dashEmail').textContent=user.email;
+  showToast('Settings saved!');
+}
+
+Cart.updateBadge();
+if(loggedIn&&currentUser.name)showDashboard(currentUser);
+</script>
+</body>
+</html>
